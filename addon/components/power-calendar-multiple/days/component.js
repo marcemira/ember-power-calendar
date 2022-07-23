@@ -1,5 +1,5 @@
-import DaysComponent from '../power-calendar/days';
-import fallbackIfUndefined from '../../utils/computed-fallback-if-undefined';
+import DaysComponent from '../../power-calendar/days/component';
+import fallbackIfUndefined from '../../../utils/computed-fallback-if-undefined';
 import { isSame } from 'ember-power-calendar-utils';
 
 export default class extends DaysComponent {

@@ -1,5 +1,5 @@
 import { getProperties } from '@ember/object';
-import DaysComponent from '../power-calendar/days';
+import DaysComponent from '../../power-calendar/days/component';
 import { isBetween, isSame, diff } from 'ember-power-calendar-utils';
 
 export default class extends DaysComponent {

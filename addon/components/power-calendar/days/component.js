@@ -1,10 +1,8 @@
-import { layout, tagName } from "@ember-decorators/component";
-import Component from '@ember/component';
+import Component from '@glimmer/component';
 import { computed, action } from '@ember/object';
 import { scheduleOnce } from '@ember/runloop';
 import { inject as service } from '@ember/service';
 import { assert } from '@ember/debug';
-import templateLayout from '../../templates/components/power-calendar/days';
 import {
   add,
   endOf,
@@ -34,7 +32,7 @@ const WEEK_DAYS = [
   'Sun'
 ];
 
-export default @layout(templateLayout) @tagName('') class extends Component {
+export default class extends Component {
   focusedId = undefined
   showDaysAround = true
   weekdayFormat = 'short' // "min" | "short" | "long"

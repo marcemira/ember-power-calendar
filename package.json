@@ -81,6 +81,7 @@
     "test": "tests"
   },
   "dependencies": {
+    "ember-arg-types": "^0.4.0",
     "ember-assign-helper": "^0.3.0 || ^0.4.0",
     "ember-cli-babel": "^7.18.0",
     "ember-cli-element-closest-polyfill": "^0.0.2",
@@ -88,7 +89,8 @@
     "ember-concurrency": "^0.8.27 || ^0.9.0 || ^0.10.0 || ^1.0.0 || ^2.0.0-rc.1",
     "ember-decorators": "^6.1.1",
     "ember-element-helper": "^0.5.0 || ^0.6.0",
-    "ember-truth-helpers": "^2.1.0 || ^3.0.0"
+    "ember-truth-helpers": "^2.1.0 || ^3.0.0",
+    "prop-types": "^15.8.1"
   },
   "ember": {
     "edition": "octane"

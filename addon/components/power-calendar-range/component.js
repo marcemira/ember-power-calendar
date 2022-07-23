@@ -1,6 +1,6 @@
 import { computed, action, getProperties } from '@ember/object';
-import CalendarComponent from './power-calendar';
-import fallbackIfUndefined from '../utils/computed-fallback-if-undefined';
+import CalendarComponent from '../power-calendar/component';
+import fallbackIfUndefined from '../../utils/computed-fallback-if-undefined';
 import {
   normalizeDate,
   normalizeRangeActionValue,

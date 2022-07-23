@@ -1,4 +1,4 @@
-import CalendarComponent from './power-calendar';
+import CalendarComponent from '../power-calendar/component';
 import { computed, action } from '@ember/object';
 import {
   normalizeDate,
