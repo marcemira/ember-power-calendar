@@ -12,13 +12,18 @@ import {
   normalizeCalendarValue
 } from 'ember-power-calendar-utils'
 
-export default class extends Component {
+export default class PowerCalendar extends Component {
   @service('power-calendar') powerCalendarService
 
+  _calendarType = 'single'
   navComponent = 'power-calendar/nav'
   daysComponent = 'power-calendar/days'
-  center = null
-  _calendarType = 'single'
+
+  @arg
+  center
+
+  @arg
+  selected
 
   @arg(func)
   onInit
@@ -65,14 +70,6 @@ export default class extends Component {
     }
 
     return actions
-  }
-
-  get selected() {
-    return undefined
-  }
-
-  set selected(v) {
-    return normalizeDate(v)
   }
 
   get currentCenter() {

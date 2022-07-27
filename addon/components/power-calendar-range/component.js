@@ -1,6 +1,9 @@
-import { computed, action, getProperties } from '@ember/object';
-import CalendarComponent from '../power-calendar/component';
-import fallbackIfUndefined from '../../utils/computed-fallback-if-undefined';
+import { computed, action, getProperties } from '@ember/object'
+import CalendarComponent from '../power-calendar/component'
+import { arg } from 'ember-arg-types'
+import { assert } from '@ember/debug'
+import ownProp from 'ember-power-calendar/-private/utils/own-prop'
+import { func } from 'prop-types'
 import {
   normalizeDate,
   normalizeRangeActionValue,
@@ -8,134 +11,127 @@ import {
   isAfter,
   isBefore,
   normalizeDuration
-} from 'ember-power-calendar-utils';
-import { assert } from '@ember/debug';
+} from 'ember-power-calendar-utils'
 
-import ownProp from 'ember-power-calendar/-private/utils/own-prop';
+const DEFAULT_DURATION = 86400000
 
-export default class extends CalendarComponent {
-  @fallbackIfUndefined(false) proximitySelection
-  daysComponent = 'power-calendar-range/days'
+export default class PowerCalendarRange extends CalendarComponent {
+  @arg
+  center
+
+  @arg
+  selected
+
+  @arg(func)
+  onSelect
+
+  @arg
+  proximitySelection = false
+
+  @arg
+  minRange
+
+  @arg
+  maxRange
+
   _calendarType = 'range'
+  daysComponent = 'power-calendar-range/days'
 
-  // CPs
-  @computed
-  get minRange() {
-    return 86400000;
-  }
-  set minRange(v) {
-    if (typeof v === 'number') {
-      return v * 86400000;
-    }
-    return normalizeDuration(v === undefined ? 86400000 : v);
-  }
+  get currentCenter () {
+    let center = this.center
 
-  @computed
-  get maxRange() {
-    return null;
-  }
-  set maxRange(v) {
-    if (typeof v === 'number') {
-      return v * 86400000;
-    }
-    return normalizeDuration(v === undefined ? 86400000 : v);
-  }
-
-  @computed
-  get selected() {
-    return { start: undefined, end: undefined };
-  }
-  set selected(v) {
-    if (v === undefined || v === null) {
-      v = {};
-    }
-    return { start: normalizeDate(v.start), end: normalizeDate(v.end) };
-  }
-
-  @computed('center')
-  get currentCenter() {
-    let center = this.center;
     if (!center) {
-      center = this.selected.start || this.powerCalendarService.getDate();
+      center = this.selected.start || this.powerCalendarService.getDate()
     }
-    return normalizeDate(center);
+
+    return normalizeDate(center)
   }
 
-  @computed('_publicAPI', 'minRange', 'maxRange')
-  get publicAPI() {
-    let rangeOnlyAPI = this.getProperties('minRange', 'maxRange');
-    return Object.assign(rangeOnlyAPI, this._publicAPI);
+  get publicAPI () {
+    let rangeOnlyAPI = {
+      minRange: this.minRange,
+      maxRange: this.maxRange
+    }
+
+    return { ...rangeOnlyAPI, ...this._publicAPI }
   }
 
   // Actions
   @action
-  select({ date }, calendar, e) {
+  select ({ date }, calendar, e) {
     assert(
       'date must be either a Date, or a Range',
-      date && (ownProp(date, 'start') || ownProp(date, 'end') || date instanceof Date)
-    );
+      date?.start || date?.end || date instanceof Date
+    )
 
-    let range;
+    let range
 
-    if (ownProp(date, 'start') && ownProp(date, 'end')) {
-      range = { date };
+    if (date?.start && date?.end) {
+      range = { date }
     } else {
-      range = this._buildRange({ date });
+      range = this._buildRange({ date })
     }
 
-    let { start, end } = range.date;
+    const { start, end } = range.date
+
     if (start && end) {
-      let { minRange, maxRange } = this.publicAPI;
-      let diffInMs = Math.abs(diff(end, start));
-      if (diffInMs < minRange || maxRange && diffInMs > maxRange) {
-        return;
+      const { minRange, maxRange } = this.publicAPI
+      const diffInMs = Math.abs(diff(end, start))
+
+      if (diffInMs < minRange || (maxRange && diffInMs > maxRange)) {
+        return
       }
     }
 
     if (this.onSelect) {
-      this.onSelect(range, calendar, e);
+      this.onSelect(range, calendar, e)
     }
   }
 
   // Methods
-  _buildRange(day) {
-    let selected = this.publicAPI.selected || { start: null, end: null };
-    let { start, end } = getProperties(selected, 'start', 'end');
+  _buildRange (day) {
+    const selected = this.publicAPI.selected || { start: null, end: null }
+    const { start, end } = getProperties(selected, 'start', 'end')
 
     if (this.proximitySelection) {
-      return this._buildRangeByProximity(day, start, end);
+      return this._buildRangeByProximity(day, start, end)
     }
 
-    return this._buildDefaultRange(day, start, end);
+    return this._buildDefaultRange(day, start, end)
   }
 
-  _buildRangeByProximity(day, start, end) {
+  _buildRangeByProximity (day, start, end) {
     if (start && end) {
-      let changeStart = Math.abs(diff(day.date, end)) > Math.abs(diff(day.date, start));
+      const changeStart =
+        Math.abs(diff(day.date, end)) > Math.abs(diff(day.date, start))
 
       return normalizeRangeActionValue({
         date: {
           start: changeStart ? day.date : start,
           end: changeStart ? end : day.date
         }
-      });
+      })
     }
 
     if (isBefore(day.date, start)) {
-      return normalizeRangeActionValue({ date: { start: day.date, end: null } });
+      return normalizeRangeActionValue({ date: { start: day.date, end: null } })
     }
 
-    return this._buildDefaultRange(day, start, end);
+    return this._buildDefaultRange(day, start, end)
   }
 
-  _buildDefaultRange(day, start, end) {
+  _buildDefaultRange (day, start, end) {
     if (start && !end) {
       if (isAfter(start, day.date)) {
-        return normalizeRangeActionValue({ date: { start: day.date, end: start } });
+        return normalizeRangeActionValue({
+          date: { start: day.date, end: start }
+        })
       }
-      return normalizeRangeActionValue({ date: { start: start, end: day.date } });
+      return normalizeRangeActionValue({
+        date: { start: start, end: day.date }
+      })
     }
 
-    return normalizeRangeActionValue({ date: { start: day.date, end: null } });
+    return normalizeRangeActionValue({ date: { start: day.date, end: null } })
   }
 }

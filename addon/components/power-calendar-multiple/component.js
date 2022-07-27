@@ -1,69 +1,74 @@
-import CalendarComponent from '../power-calendar/component';
-import { computed, action } from '@ember/object';
+import CalendarComponent from '../power-calendar/component'
+import { computed, action } from '@ember/object'
+import { arg } from 'ember-arg-types'
 import {
   normalizeDate,
   isSame,
   normalizeMultipleActionValue
-} from 'ember-power-calendar-utils';
-import { assert } from '@ember/debug';
-import { isArray } from '@ember/array';
+} from 'ember-power-calendar-utils'
+import { assert } from '@ember/debug'
+import { isArray } from '@ember/array'
 
-export default class extends CalendarComponent {
+export default class PowerCalendarMultiple extends CalendarComponent {
   daysComponent = 'power-calendar-multiple/days'
   _calendarType = 'multiple'
 
-  // CPs
-  @computed
-  get selected() {
-    return undefined;
-  }
-  set selected(v) {
-    return isArray(v) ? v.map(normalizeDate) : v;
-  }
+  @arg(func)
+  onSelect
 
-  @computed('center')
-  get currentCenter() {
-    let center = this.center;
+  @arg
+  selected
+
+  @arg
+  center
+
+  get currentCenter () {
+    let center = this.center
+
     if (!center) {
-      center = (this.selected || [])[0] || this.powerCalendarService.getDate();
+      center = (this.selected || [])[0] || this.powerCalendarService.getDate()
     }
-    return normalizeDate(center);
+
+    return normalizeDate(center)
   }
 
   // Actions
   @action
-  select(dayOrDays, calendar, e) {
+  select (dayOrDays, calendar, e) {
     assert(
       `The select action expects an array of date objects, or a date object. ${typeof dayOrDays} was recieved instead.`,
-      isArray(dayOrDays) || dayOrDays instanceof Object && dayOrDays.date instanceof Date
-    );
+      isArray(dayOrDays) ||
+        (dayOrDays instanceof Object && dayOrDays.date instanceof Date)
+    )
 
-    let days;
+    let days
 
     if (isArray(dayOrDays)) {
-      days = dayOrDays;
+      days = dayOrDays
     } else if (dayOrDays instanceof Object && dayOrDays.date instanceof Date) {
-      days = [dayOrDays];
+      days = [dayOrDays]
     }
 
     if (this.onSelect) {
-      this.onSelect(this._buildCollection(days), calendar, e);
+      this.onSelect(this._buildCollection(days), calendar, e)
     }
   }
 
   // Methods
-  _buildCollection(days) {
-    let selected = this.publicAPI.selected || [];
+  _buildCollection (days) {
+    let selected = this.publicAPI.selected || []
 
     for (let day of days) {
-      let index = selected.findIndex(selectedDate => isSame(day.date, selectedDate, "day"));
+      const index = selected.findIndex(selectedDate =>
+        isSame(day.date, selectedDate, 'day')
+      )
       if (index === -1) {
-        selected = [...selected, day.date];
+        selected = [...selected, day.date]
       } else {
-        selected = selected.slice(0, index).concat(selected.slice(index + 1));
+        selected = selected.slice(0, index).concat(selected.slice(index + 1))
       }
     }
 
-    return normalizeMultipleActionValue({ date: selected });
+    return normalizeMultipleActionValue({ date: selected })
   }
 }

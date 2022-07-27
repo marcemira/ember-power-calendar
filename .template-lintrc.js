@@ -379,9 +379,5 @@ const pending = [
 ];
 
 module.exports = {
-  extends: 'octane',
-  rules: {
-    'no-unused-block-params': false
-  },
-  pending,
+  extends: 'recommended',
 };
