@@ -5,8 +5,9 @@ import { task, timeout, waitForQueue } from 'ember-concurrency';
 
 export default class extends Controller {
   @service router
-  now = new Date()
+
   today = this.now
+  now = new Date()
   day = this.now
 
   @(task(function * (e) {

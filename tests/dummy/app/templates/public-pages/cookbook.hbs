@@ -1,10 +1,23 @@
 <section class="docs">
   <nav class="side-nav">
-    <header class="side-nav-header">Basic recipes</header>
-    {{#link-to 'public-pages.cookbook.index' class="side-nav-link"}}System-wide config{{/link-to}}
-    {{#link-to 'public-pages.cookbook.datepicker' class="side-nav-link"}}Datepicker{{/link-to}}
-    {{#link-to 'public-pages.cookbook.nav-select' class="side-nav-link"}}Nav with select{{/link-to}}
-    {{#link-to 'public-pages.cookbook.multiple-months' class="side-nav-link"}}Multiple months{{/link-to}}
+    <header class="side-nav-header">
+      Basic recipes
+    </header>
+    <LinkTo @route="public-pages.cookbook.index" class="side-nav-link">
+      System-wide config
+    </LinkTo>
+    <LinkTo @route="public-pages.cookbook.datepicker" class="side-nav-link">
+      Datepicker
+    </LinkTo>
+    <LinkTo @route="public-pages.cookbook.nav-select" class="side-nav-link">
+      Nav with select
+    </LinkTo>
+    <LinkTo
+      @route="public-pages.cookbook.multiple-months"
+      class="side-nav-link"
+    >
+      Multiple months
+    </LinkTo>
     {{!--
     {{#link-to 'public-pages.cookbook.material-theme' class="side-nav-link"}}Material theme{{/link-to}}
     {{#link-to 'public-pages.cookbook.css-animations' class="side-nav-link"}}CSS Animations{{/link-to}}
@@ -15,7 +28,13 @@
     --}}
   </nav>
   <section class="doc-page">
-    <PowerSelect @selected={{currentSection}} @options={{groupedSections}} @onChange={{action 'visit'}} @searchField="text" @triggerClass="section-selector" as |option|>
+    <PowerSelect
+      @selected={{this.currentSection}}
+      @options={{this.groupedSections}}
+      @onChange={{this.visit}}
+      @searchField="text"
+      @triggerClass="section-selector" as |option|
+    >
       {{option.text}}
     </PowerSelect>
     {{outlet}}

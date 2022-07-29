@@ -1,25 +1,37 @@
 <header class="main-header">
   <nav class="main-header-nav">
     <div class="main-header-nav-links">
-      {{#link-to 'public-pages.docs' class="main-header-nav-link"}}Docs{{/link-to}}
-      {{#link-to 'public-pages.cookbook' class="main-header-nav-link"}}Cookbook{{/link-to}}
-      {{#link-to 'public-pages.addons' class="main-header-nav-link"}}Addons{{/link-to}}
-      <a href="https://github.com/cibernox/ember-power-calendar" class="main-header-nav-link">Github</a>
+      <LinkTo @route="public-pages.docs" class="main-header-nav-link">
+        Docs
+      </LinkTo>
+      <LinkTo @route="public-pages.cookbook" class="main-header-nav-link">
+        Cookbook
+      </LinkTo>
+      <LinkTo @route="public-pages.addons" class="main-header-nav-link">
+        Addons
+      </LinkTo>
+      <a
+        href="https://github.com/cibernox/ember-power-calendar"
+        class="main-header-nav-link"
+      >
+        Github
+      </a>
     </div>
     <div class="main-header-logo">
-      <LinkTo
-        @route="public-pages.index"
-        class="home-link"
-      >
-        <img src="/ember_logo.png" alt="ember">
-        <strong>Power</strong>
+      <LinkTo @route="public-pages.index" class="home-link">
+        <img src="/ember_logo.png" alt="ember" />
+        <strong>
+          Power
+        </strong>
         {{! template-lint-disable no-invalid-interactive }}
-        <div
-          class="header-calendar"
-          {{on "click" (perform this.flipPage)}}
-        >
-          <div class="header-calendar-page {{if (eq day today) '' 'run-animation'}}">
-            <sub class="calendar-page-number">{{format-date day 'D'}}</sub>
+        <div class="header-calendar" {{on 'click' (perform this.flipPage)}}>
+          <div
+            class="header-calendar-page
+              {{if (eq this.day this.today) '' 'run-animation'}}"
+          >
+            <sub class="calendar-page-number">
+              {{format-date this.day 'D'}}
+            </sub>
             Calendar
           </div>
           <div class="header-calendar-ring left"></div>
@@ -29,12 +41,17 @@
     </div>
   </nav>
 </header>
+
 <div class="main-content">
   {{outlet}}
 </div>
+
 <footer class="main-footer">
   <div class="main-footer-content">
-    Deployed with love by <a href="http://github.com/cibernox">Miguel Camba</a>
+    Deployed with love by
+    <a href="http://github.com/cibernox">
+      Miguel Camba
+    </a>
   </div>
 </footer>
 
